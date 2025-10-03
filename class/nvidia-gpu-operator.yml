@@ -1,11 +1,18 @@
 parameters:
+  =_kapitan:
+    olm:
+      compile:
+        - input_paths:
+            - ${_base_directory}/component/app.jsonnet
+          input_type: jsonnet
+          output_path: .
+        - input_paths:
+            - ${_base_directory}/component/main.jsonnet
+          input_type: jsonnet
+          output_path: nvidia-gpu-operator/
+        - input_paths:
+            - ${_base_directory}/component/olm.jsonnet
+          input_type: jsonnet
+          output_path: nvidia-gpu-operator/01_olm/
   kapitan:
-    compile:
-      - input_paths:
-          - ${_base_directory}/component/app.jsonnet
-        input_type: jsonnet
-        output_path: .
-      - input_paths:
-          - ${_base_directory}/component/main.jsonnet
-        input_type: jsonnet
-        output_path: nvidia-gpu-operator/
+    ${_kapitan:${nvidia_gpu_operator:install_method}}

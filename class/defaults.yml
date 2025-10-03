@@ -2,4 +2,83 @@ parameters:
   nvidia_gpu_operator:
     =_metadata:
       multi_tenant: true
-    namespace: syn-nvidia-gpu-operator
+
+    install_method: olm
+
+    namespace: nvidia-gpu-operator
+
+    gpu_operator:
+      namespace: "${nvidia_gpu_operator:namespace}"
+      olm:
+        version: stable
+        channel: "${nvidia_gpu_operator:gpu_operator:olm:version}"
+      cluster_policy_name: gpu-cluster-policy
+      cluster_policy_spec:
+        operator:
+          defaultRuntime: crio
+          use_ocp_driver_toolkit: true
+        driver:
+          kernelModuleType: auto
+          upgradePolicy:
+            autoUpgrade: true
+            drain:
+              deleteEmptyDir: false
+              enable: false
+              force: false
+              timeoutSeconds: 300
+            maxParallelUpgrades: 1
+            maxUnavailable: 25%
+            podDeletion:
+              deleteEmptyDir: false
+              force: false
+              timeoutSeconds: 300
+            waitForCompletion:
+              timeoutSeconds: 0
+          licensingConfig:
+            nlsEnabled: true
+        dcgmExporter:
+          serviceMonitor:
+            enabled: true
+        daemonsets:
+          updateStrategy: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: "1"
+        devicePlugin:
+          mps:
+            root: /run/nvidia/mps
+        nodeStatusExporter:
+          enabled: true
+        mig:
+          strategy: single
+        vgpuManager:
+          enabled: false
+        vgpuDeviceManager:
+          enabled: true
+        sandboxDevicePlugin:
+          enabled: true
+        vfioManager:
+          enabled: true
+
+    feature_discovery_operator:
+      enabled: true
+      namespace: openshift-nfd
+      olm:
+        version: stable
+        channel: "${nvidia_gpu_operator:feature_discovery_operator:olm:version}"
+      configData:
+        core:
+          sleepInterval: 60s
+        sources:
+          pci:
+            deviceClassWhitelist:
+              - "0200"
+              - "03"
+              - "12"
+            deviceLabelFields:
+              - "vendor"
+      nodeFeatureDiscovery:
+        name: nfd-instance
+        spec:
+          operand:
+            imagePullPolicy: IfNotPresent
+            servicePort: 12000
