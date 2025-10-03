@@ -22,26 +22,26 @@ local ClusterPolicy = function(name='') {
   },
 };
 
-local nfd = NodeFeatureDiscovery(params.feature_discovery_operator.nodeFeatureDiscovery.name) {
+local nfd = NodeFeatureDiscovery(params.nfd.node_feature_discovery.name) {
     metadata+: {
-        namespace: params.feature_discovery_operator.namespace,
+        namespace: params.nfd.namespace,
     },
-    spec+: params.feature_discovery_operator.nodeFeatureDiscovery.spec,
+    spec+: params.nfd.node_feature_discovery.spec,
   } {
     spec+: {
-      workerConfig: {
-        configData: std.manifestYamlDoc(params.feature_discovery_operator.configData),
+      workerConfig+: {
+        configData: std.manifestYamlDoc(params.nfd.node_feature_discovery.configData),
       },
     },
   };
 
-local clusterpolicy = ClusterPolicy(params.gpu_operator.cluster_policy_name) {
-    spec+: params.gpu_operator.cluster_policy_spec
+local clusterpolicy = ClusterPolicy(params.operator.cluster_policy_name) {
+    spec+: params.operator.cluster_policy_spec
 };
 
 
 // Define outputs below
 {
-    '20_nfd': nfd,
+    [if params.nfd.enabled then '20_nfd']: nfd,
     '30_clusterpolicy': clusterpolicy,
 }

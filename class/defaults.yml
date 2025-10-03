@@ -7,11 +7,11 @@ parameters:
 
     namespace: nvidia-gpu-operator
 
-    gpu_operator:
+    operator:
       namespace: "${nvidia_gpu_operator:namespace}"
       olm:
         version: stable
-        channel: "${nvidia_gpu_operator:gpu_operator:olm:version}"
+        channel: "${nvidia_gpu_operator:operator:olm:version}"
       cluster_policy_name: gpu-cluster-policy
       cluster_policy_spec:
         # NOTE(aa): The default spec is taken from the ClusterServiceVersion's `alm_examples` annotation
@@ -99,26 +99,26 @@ parameters:
         gdrcopy:
           enabled: false
 
-    feature_discovery_operator:
+    nfd:
       enabled: true
       namespace: openshift-nfd
       olm:
         version: stable
-        channel: "${nvidia_gpu_operator:feature_discovery_operator:olm:version}"
-      configData:
-        core:
-          sleepInterval: 60s
-        sources:
-          pci:
-            deviceClassWhitelist:
-              - "0200"
-              - "03"
-              - "12"
-            deviceLabelFields:
-              - "vendor"
-      nodeFeatureDiscovery:
+        channel: "${nvidia_gpu_operator:nfd:olm:version}"
+      node_feature_discovery:
         name: nfd-instance
         spec:
           operand:
             imagePullPolicy: IfNotPresent
             servicePort: 12000
+        configData:
+          core:
+            sleepInterval: 60s
+          sources:
+            pci:
+              deviceClassWhitelist:
+                - "0200"
+                - "03"
+                - "12"
+              deviceLabelFields:
+                - "vendor"
