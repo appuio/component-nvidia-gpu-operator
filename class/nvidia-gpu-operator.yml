@@ -11,6 +11,10 @@ parameters:
           input_type: jsonnet
           output_path: nvidia-gpu-operator/
         - input_paths:
+            - ${_base_directory}/component/namespace.jsonnet
+          input_type: jsonnet
+          output_path: nvidia-gpu-operator/00_namespace/
+        - input_paths:
             - ${_base_directory}/component/olm.jsonnet
           input_type: jsonnet
           output_path: nvidia-gpu-operator/01_olm/
