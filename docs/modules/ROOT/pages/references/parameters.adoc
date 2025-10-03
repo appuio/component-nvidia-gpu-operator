@@ -6,14 +6,129 @@ The parent key for all of the following parameters is `nvidia_gpu_operator`.
 
 [horizontal]
 type:: string
-default:: `syn-nvidia-gpu-operator`
+default:: `nvidia-gpu-operator`
 
-The namespace in which to deploy this component.
+Namespace in which to deploy the Nvidia GPU operator.
+
+== `install_method`
+
+[horizontal]
+type:: string
+default:: `olm`
+
+Means by which to install the operator.
+Currently only `olm` is supported, for OpenShift OLM install.
+
+Installation parameters are configured via `operator.olm` and `nfd.olm`.
 
 
-== Example
+== `operator`
 
-[source,yaml]
-----
-namespace: example-namespace
-----
+[horizontal]
+type:: dictionary
+default:: https://github.com/appuio/component-nvidia-gpu-operator/blob/master/class/defaults.yml[See `class/defaults.yml].
+
+Configuration for the Nvidia GPU operator.
+
+=== `operator.olm.version`
+
+[horizontal]
+type:: string
+default:: stable
+
+Version of the operator to install.
+
+=== `operator.olm.channel`
+
+[horizontal]
+type:: string
+default:: ${nvidia_gpu_operator:operator:olm:version}
+
+OLM channel from which to install the operator. Defaults to `operator.olm.version`.
+
+=== `operator.cluster_policy_name`
+[horizontal]
+type:: string
+default:: gpu-cluster-policy
+
+Name of the `nvidia.com/ClusterPolicy` object the component creates.
+
+=== `operator.cluster_policy_spec`
+[horizontal]
+type:: dictionary
+default:: https://github.com/appuio/component-nvidia-gpu-operator/blob/master/class/defaults.yml[See `class/defaults.yml].
+
+Spec of the `nvidia.com/ClusterPolicy` object the component creates.
+
+== `nfd`
+
+[horizontal]
+type:: dictionary
+default:: https://github.com/appuio/component-nvidia-gpu-operator/blob/master/class/defaults.yml[See `class/defaults.yml].
+
+Configuration for the Node Feature Discovery operator, which is a dependency for the Nvidia GPU operator.
+
+=== `nfd.enabled`
+
+[horizontal]
+type:: boolean
+default:: true
+
+Whether the component should deploy the Node Feature Discovery operator.
+Note that the Nvidia GPU operator requires the Node Feature Discovery operator to operate.
+When disabling the Node Feature Discovery operator here, that same operator must be provided on the cluster via other means.
+
+=== `nfd.namespace`
+
+[horizontal]
+type:: string
+default:: openshift-nfd
+
+Namespace in which to deploy the Node Feature Discovery operator.
+
+=== `nfd.olm.version`
+
+[horizontal]
+type:: string
+default:: stable
+
+Version of the operator to install.
+
+=== `nfd.olm.channel`
+
+[horizontal]
+type:: string
+default:: ${nvidia_gpu_operator:nfd:olm:version}
+
+OLM channel from which to install the operator. Defaults to `nfd.olm.version`.
+
+
+=== `nfd.node_feature_discovery`
+[horizontal]
+type:: dictionary
+default:: https://github.com/appuio/component-nvidia-gpu-operator/blob/master/class/defaults.yml[See `class/defaults.yml].
+
+Configuration for the `nfd.openshift.io/NodeFeatureDiscovery` object this component creates.
+
+==== `nfd.node_feature_discovery.configData`
+[horizontal]
+type:: dictionary
+default:: https://github.com/appuio/component-nvidia-gpu-operator/blob/master/class/defaults.yml[See `class/defaults.yml].
+
+YAML configuration for the Node Feature Discovery operator.
+This config is converted to a string and injected into the spec of the `nfd.openshift.io/NodeFeatureDiscovery` object under `spec.workerConfig.configData`.
+It is applied to the object after `nfd.node_feature_discovery.spec`, meaning any value set in `nfd.node_feature_discovery.spec.workerConfig` is overwritten.
+
+==== `nfd.node_feature_discovery.spec`
+[horizontal]
+type:: dictionary
+default:: https://github.com/appuio/component-nvidia-gpu-operator/blob/master/class/defaults.yml[See `class/defaults.yml].
+
+Additional spec for the `NodeFeatureDiscovery` object.
+
+==== `nfd.node_feature_discovery.name`
+[horizontal]
+type:: string
+default:: nfd-instance
+
+Name of the `NodeFeatureDiscovery` object created by this component.
