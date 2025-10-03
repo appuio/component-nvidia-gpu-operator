@@ -1,0 +1,6 @@
+name: nvidia-gpu-operator
+title: nvidia-gpu-operator
+version: master
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/partials/nav.adoc

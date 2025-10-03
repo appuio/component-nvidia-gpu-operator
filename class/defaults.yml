@@ -1,0 +1,5 @@
+parameters:
+  nvidia_gpu_operator:
+    =_metadata:
+      multi_tenant: true
+    namespace: syn-nvidia-gpu-operator
